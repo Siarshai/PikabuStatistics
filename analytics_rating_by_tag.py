@@ -4,10 +4,7 @@ from performance.caching import simple_cache
 from drawing import draw_rating_bar_chart
 from utils import clean_folders, filter_tags_by_occurency_number
 
-
-
 RESULT_FOLDER = "tag_wise_mean_rating"
-
 
 def analyze_tag_wise_mean_rating(data, tags=None):
     print("Analyzing tag wise mean rating")

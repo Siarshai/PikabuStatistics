@@ -2,7 +2,7 @@ from itertools import product
 import datetime
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import rc
+from matplotlib import rc, pyplot, pyplot, pyplot, pyplot, pyplot, pyplot
 from plot_drawing.annotatable import annotatable
 from plot_drawing.savable import savable
 from behaviour.type_enfocement import enforce_kwargs
@@ -147,6 +147,28 @@ def draw_rating_bar_chart(data_dictionary, bars_threshold=60, **kwargs):
     fig.subplots_adjust(bottom=0.2 if fig.get_size_inches()[1] >= 12 else 0.25)
 
 
+@enforce_kwargs({"path_to_save", "should_save", "x_ticks", "hlines", "vlines", "captions", "figsize"})
+@savable(default_save=True, default_path_to_save="rating_plot.png")
+@annotatable
+def draw_post_number_logplot(T, RR, labels, **kwargs):
+    fig = plt.figure(figsize=kwargs["figsize"] if "figsize" in kwargs else (24, 14))
+    _adjust_fig_right_if_needed(fig)
+    ax = plt.subplot(111)
+    for R, label in zip(RR, labels):
+        ax.semilogy(T, R, label=label)
+    ax.set_ylabel(u'Количество постов')
+    ax.set_xlabel(u'Рейтинг')
+    ax.set_title(u'Логарифмический рейтинг количества постов')
+    if "x_ticks" in kwargs:
+        ax.set_xticks(kwargs["x_ticks"])
+    plt.grid(True)
+    plt.xticks(rotation=90)
+    bbox_x_anchor = 1.025
+    ax.legend(bbox_to_anchor=(bbox_x_anchor, 1), loc=2, borderaxespad=0.)
+    if fig.get_size_inches()[1] <= 12:
+        fig.subplots_adjust(bottom=0.2)
+
+
 @enforce_kwargs({"begin_time", "end_time", "path_to_save", "should_save", "hlines", "vlines", "captions", "figsize"})
 @savable(default_save=True, default_path_to_save="rating_plot.png")
 @annotatable
@@ -264,3 +286,28 @@ def draw_rating_monthly(T, R, N, **kwargs):
             ax.axvline(x, color='k', linestyle='--')
     ax.legend(bbox_to_anchor=(bbox_x_anchor, 1), loc=2, borderaxespad=0.)
     ax_twin.legend(bbox_to_anchor=(bbox_x_anchor, 0.9), loc=2, borderaxespad=0.)
+
+
+@savable(default_save=True, default_path_to_save="tsne_result.png")
+def draw_tsne_result(tsne_affinity_coords, labels_list=None, **kwargs):
+    fig = plt.figure(figsize=(20, 20))
+    ax = plt.axes(frameon=False)
+    plt.axis('off')
+    if labels_list is None:
+        plt.scatter(tsne_affinity_coords[:, 0], tsne_affinity_coords[:, 1])
+    else:
+        unique_labels = set(labels_list)
+        colors = plt.cm.Spectral(np.linspace(0, 1, len(unique_labels)))
+        for k, col in zip(unique_labels, colors):
+            if k == -1:
+                col = 'k'  # Black used for noise.
+
+            class_member_mask = (labels_list == k)
+
+            xy = tsne_affinity_coords[class_member_mask]
+            plt.plot(xy[:, 0], xy[:, 1], 'o', markerfacecolor=col,
+                     markeredgecolor='k', markersize=5)
+
+            mean_x = np.mean(xy[:, 0])
+            mean_y = np.mean(xy[:, 1])
+            plt.text(mean_x, mean_y, str(k))

@@ -33,7 +33,7 @@ def simple_cache(cache_file):
                 if os.path.exists(cache_file):
                     os.remove(cache_file)
             except OSError as ose:
-                warnings.warn("Tried to remove cache file {} but failed: {}".format(cache_file, str(e)))
+                warnings.warn("Tried to remove cache file {} but failed: {}".format(cache_file, str(ose)))
 
         cacher.clean_cache = clean_cache
 
@@ -76,7 +76,7 @@ def save_code_based_cache(cache_file):
                 if os.path.exists(cache_file):
                     os.remove(cache_file)
             except OSError as ose:
-                warnings.warn("Tried to remove cache file {} but failed: {}".format(cache_file, str(e)))
+                warnings.warn("Tried to remove cache file {} but failed: {}".format(cache_file, str(ose)))
 
         cacher.clean_cache = clean_cache
 
